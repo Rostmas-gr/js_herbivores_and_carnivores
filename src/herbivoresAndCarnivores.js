@@ -1,8 +1,6 @@
 'use strict';
 
 class Animal {
-  static alive = [];
-
   constructor(name, health = 100) {
     this.name = name;
     this.health = health;
@@ -10,19 +8,15 @@ class Animal {
   }
 
   _checkDeath() {
-    if (this.health <= 0) {
-      const index = Animal.alive.indexOf(this);
-
-      if (index !== -1) {
-        Animal.alive.splice(index, 1);
-      }
-    }
+    // Перезаписуємо alive, залишаючи тільки живих тварин
+    Animal.alive = Animal.alive.filter((a) => a.health > 0);
   }
 }
+Animal.alive = [];
 
 class Herbivore extends Animal {
-  constructor(name) {
-    super(name);
+  constructor(name, health = 100) {
+    super(name, health);
     this.hidden = false;
   }
 
@@ -32,12 +26,13 @@ class Herbivore extends Animal {
 }
 
 class Carnivore extends Animal {
+  constructor(name, health = 100) {
+    super(name, health);
+  }
+
   bite(prey) {
     if (prey instanceof Herbivore && !prey.hidden) {
       prey.health -= 50;
-      // eslint-disable-next-line curly
-      if (prey.health < 0) prey.health = 0;
-
       prey._checkDeath();
     }
   }
